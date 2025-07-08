@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Анимированный решатель Судоку</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.1/dist/tesseract.min.js"></script>
 </head>
 <body>
@@ -123,6 +123,6 @@
         <button id="theme-toggle-btn">Переключить тему</button>
     </div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
