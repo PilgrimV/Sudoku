@@ -11,13 +11,7 @@ document.getElementById("solve-btn").addEventListener("click", () => {
     solveSudoku(board);
 });
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function solveSudoku(board) {
-    const delay = 30;
-
     async function isValid(num, row, col) {
         for (let i = 0; i < 9; i++) {
             if (board[row][i] === num || board[i][col] === num) return false;
@@ -42,13 +36,9 @@ async function solveSudoku(board) {
                         if (await isValid(num, row, col)) {
                             board[row][col] = num;
                             updateCell(row, col, num);
-                            await sleep(delay);
-
                             if (await backtrack()) return true;
-
                             board[row][col] = 0;
                             updateCell(row, col, '');
-                            await sleep(delay);
                         }
                     }
                     return false;
@@ -95,49 +85,3 @@ function clearHighlights() {
         cell.classList.remove("highlight-same");
     });
 }
-
-// Меню "Экспорт"
-const exportBtn = document.getElementById("export-btn");
-const exportMenu = document.getElementById("export-menu");
-
-exportBtn.addEventListener("click", () => {
-    exportMenu.style.display = exportMenu.style.display === "block" ? "none" : "block";
-});
-
-document.addEventListener("click", (e) => {
-    if (!exportBtn.contains(e.target) && !exportMenu.contains(e.target)) {
-        exportMenu.style.display = "none";
-    }
-});
-
-document.querySelectorAll(".export-option").forEach(option => {
-    option.addEventListener("click", async () => {
-        const type = option.getAttribute("data-type");
-        const table = document.querySelector("table");
-
-        const now = new Date();
-        const timestamp = now.toISOString().slice(0, 16).replace("T", "_").replace(":", "-");
-
-        const canvas = await html2canvas(table);
-        const imgData = canvas.toDataURL("image/png");
-        const filename = `sudoku_${timestamp}.${type}`;
-
-        if (type === "png") {
-            const link = document.createElement("a");
-            link.download = filename;
-            link.href = imgData;
-            link.click();
-        } else if (type === "pdf") {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-            pdf.save(filename);
-        }
-
-        exportMenu.style.display = "none";
-    });
-});
