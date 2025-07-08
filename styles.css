@@ -1,21 +1,107 @@
-/* Тёмная тема */
-body.dark-mode {
-    background-color: #121212;
-    color: #ffffff;
+/* Основные стили для тела страницы */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #fff;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+/* Таблица для судоку */
+table {
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+td {
+    padding: 0;
+}
+
+/* Поля для ввода */
+input {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    text-align: center;
+    border: 1px solid #999;
+    outline: none;
+    box-sizing: border-box;
+    margin: 1px;
+}
+
+input:focus {
+    background-color: #ffffcc;
 }
 
 input.dark-mode {
-    background-color: #333333;
-    color: #ffffff;
-    border: 1px solid #444444;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #444;
 }
 
+/* Жирные границы для 3x3 */
+.top-border {
+    border-top: 2px solid black;
+}
+
+.left-border {
+    border-left: 2px solid black;
+}
+
+.right-border {
+    border-right: 2px solid black;
+}
+
+.bottom-border {
+    border-bottom: 2px solid black;
+}
+
+/* Подсветка одинаковых значений */
+.highlight-same {
+    background-color: #d1ffd1 !important;
+}
+
+/* Кнопки */
+button {
+    margin: 20px 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Для экспорта */
+#export-menu {
+    font-size: 14px;
+}
+
+.export-option:hover {
+    background-color: #f0f0f0;
+}
+
+/* Кнопка переключения темы */
 button.dark-mode {
     background-color: #444444;
     color: #ffffff;
     border: 1px solid #555555;
 }
 
-button.dark-mode:hover {
-    background-color: #555555;
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
 }
