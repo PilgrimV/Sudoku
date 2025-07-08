@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sudoku-app
+  namespace: sudoku
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sudoku
+  template:
+    metadata:
+      labels:
+        app: sudoku
+    spec:
+      containers:
+      - name: sudoku
+        image: <ТВОЙ_ОБРАЗ>
+        ports:
+        - containerPort: 5000
