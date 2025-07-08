@@ -30,9 +30,7 @@ document.getElementById('recognize-btn').addEventListener('click', async () => {
     }
 
     const size = 50;
-    const board = [];
     for (let row = 0; row < 9; row++) {
-        const rowData = [];
         for (let col = 0; col < 9; col++) {
             const cellData = ctx.getImageData(col * size, row * size, size, size);
 
@@ -40,28 +38,15 @@ document.getElementById('recognize-btn').addEventListener('click', async () => {
             tempCanvas.width = tempCanvas.height = size;
             tempCanvas.getContext('2d').putImageData(cellData, 0, 0);
 
-            try {
-                const { data: { text } } = await Tesseract.recognize(
-                    tempCanvas,
-                    'eng',
-                    { tessedit_char_whitelist: '123456789' }
-                );
-                const digit = text.trim().replace(/\D/g, '');
-                rowData.push(digit.length === 1 ? digit : '');
-            } catch (error) {
-                console.error('Ошибка распознавания:', error);
-                rowData.push('');
-            }
+            const { data: { text } } = await Tesseract.recognize(
+                tempCanvas,
+                'eng',
+                { tessedit_char_whitelist: '123456789' }
+            );
+            const digit = text.trim().replace(/\D/g, '');
+            document.getElementById(`cell-${row}-${col}`).value = digit.length === 1 ? digit : '';
         }
-        board.push(rowData);
     }
-
-    // Обновляем поля на странице
-    board.forEach((row, rowIndex) => {
-        row.forEach((cell, colIndex) => {
-            document.getElementById(`cell-${rowIndex}-${colIndex}`).value = cell;
-        });
-    });
 
     alert('Распознавание завершено!');
 });
