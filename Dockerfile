@@ -2,6 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY sudoku_solver.py .
+COPY . .
 
-CMD ["python", "sudoku_solver.py"]
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+
