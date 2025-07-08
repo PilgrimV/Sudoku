@@ -16,6 +16,7 @@ spec:
       containers:
       - name: sudoku
         image: ghcr.io/pilgrimv/sudoku-web-test
+        imagePullPolicy: Always
         tag: latest
         ports:
         - containerPort: 5000
