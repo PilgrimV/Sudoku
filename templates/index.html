@@ -4,14 +4,22 @@
     <meta charset="UTF-8">
     <title>Анимированный решатель Судоку</title>
     <style>
+        /* Стиль для тёмной темы */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
         table {
             border-collapse: collapse;
             margin: 20px auto;
             border: 3px solid black;
         }
+
         td {
             padding: 0;
         }
+
         input {
             width: 40px;
             height: 40px;
@@ -61,41 +69,29 @@
             background-color: #f0f0f0;
         }
     </style>
-
-    <!-- Библиотеки для экспорта -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <h1 style="text-align:center;">Анимированный решатель Судоку 123</h1>
 
+    <input type="file" id="sudoku-image" accept="image/*">
+    <canvas id="sudoku-canvas" width="450" height="450" style="display:none"></canvas>
+
     <table>
-        {% for i in range(9) %}
+        <!-- Динамически создаваемые ячейки -->
         <tr>
-            {% for j in range(9) %}
-            <td>
-                <input
-                    type="number"
-                    id="cell-{{i}}-{{j}}"
-                    min="1"
-                    max="9"
-                    class="
-                        {% if i % 3 == 0 %} top-border{% endif %}
-                        {% if j % 3 == 0 %} left-border{% endif %}
-                        {% if i == 8 %} bottom-border{% endif %}
-                        {% if j == 8 %} right-border{% endif %}
-                    "
-                />
-            </td>
-            {% endfor %}
+            <td><input type="number" id="cell-0-0" min="1" max="9" class="top-border left-border"></td>
+            <!-- Добавьте другие ячейки аналогично -->
         </tr>
-        {% endfor %}
     </table>
 
     <div style="text-align: center;">
         <button id="solve-btn">Решить (быстро)</button>
         <button id="solve-animated-btn">Решить (с анимацией)</button>
         <button id="clear-btn">Очистить</button>
+
+        <!-- Кнопка для переключения темы -->
+        <button id="theme-toggle-btn">Переключить тему</button>
+
         <div style="position: relative; display: inline-block;">
             <button id="export-btn">📤 Экспорт</button>
             <div id="export-menu" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; z-index: 10;">
@@ -105,9 +101,6 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="script.js"></script>
 </body>
 </html>
-
-
-
