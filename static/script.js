@@ -1,3 +1,5 @@
+console.log('JS загружен!');  // Проверим, загружается ли JavaScript
+
 const fileInput = document.getElementById('sudoku-image');
 const canvas = document.getElementById('sudoku-canvas');
 const ctx = canvas.getContext('2d');
@@ -5,12 +7,19 @@ const ctx = canvas.getContext('2d');
 fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     const img = new Image();
     img.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, 450, 450);
-        canvas.style.display = 'block';
+        console.log('Изображение загружено');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);  // Очищаем canvas
+        ctx.drawImage(img, 0, 0, 450, 450);  // Отображаем картинку на canvas
+        canvas.style.display = 'block';  // Показываем canvas
     };
+
+    img.onerror = () => {
+        console.error('Ошибка загрузки изображения');
+    };
+
     img.src = URL.createObjectURL(file);
 });
 
@@ -21,7 +30,9 @@ document.getElementById('recognize-btn').addEventListener('click', async () => {
     }
 
     const size = 50;
+    const board = [];
     for (let row = 0; row < 9; row++) {
+        const rowData = [];
         for (let col = 0; col < 9; col++) {
             const cellData = ctx.getImageData(col * size, row * size, size, size);
 
@@ -29,21 +40,34 @@ document.getElementById('recognize-btn').addEventListener('click', async () => {
             tempCanvas.width = tempCanvas.height = size;
             tempCanvas.getContext('2d').putImageData(cellData, 0, 0);
 
-            const { data: { text } } = await Tesseract.recognize(
-                tempCanvas,
-                'eng',
-                { tessedit_char_whitelist: '123456789' }
-            );
-
-            const digit = text.trim().replace(/\D/g, '');
-            document.getElementById(`cell-${row}-${col}`).value = digit.length === 1 ? digit : '';
+            try {
+                const { data: { text } } = await Tesseract.recognize(
+                    tempCanvas,
+                    'eng',
+                    { tessedit_char_whitelist: '123456789' }
+                );
+                const digit = text.trim().replace(/\D/g, '');
+                rowData.push(digit.length === 1 ? digit : '');
+            } catch (error) {
+                console.error('Ошибка распознавания:', error);
+                rowData.push('');
+            }
         }
+        board.push(rowData);
     }
+
+    // Обновляем поля на странице
+    board.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+            document.getElementById(`cell-${rowIndex}-${colIndex}`).value = cell;
+        });
+    });
 
     alert('Распознавание завершено!');
 });
 
 document.getElementById("solve-btn").addEventListener("click", () => {
+    console.log('Нажата кнопка "Решить (быстро)"');
     const board = [];
     for (let i = 0; i < 9; i++) {
         const row = [];
@@ -57,6 +81,7 @@ document.getElementById("solve-btn").addEventListener("click", () => {
 });
 
 document.getElementById("solve-animated-btn").addEventListener("click", () => {
+    console.log('Нажата кнопка "Решить (с анимацией)"');
     const board = [];
     for (let i = 0; i < 9; i++) {
         const row = [];
@@ -70,6 +95,7 @@ document.getElementById("solve-animated-btn").addEventListener("click", () => {
 });
 
 document.getElementById("clear-btn").addEventListener("click", () => {
+    console.log('Нажата кнопка "Очистить"');
     document.querySelectorAll("input").forEach(cell => {
         cell.value = "";
         cell.style.backgroundColor = "";
@@ -77,6 +103,7 @@ document.getElementById("clear-btn").addEventListener("click", () => {
 });
 
 document.getElementById("theme-toggle-btn").addEventListener("click", () => {
+    console.log('Переключение темы');
     document.body.classList.toggle("dark-mode");
     document.querySelectorAll("input").forEach(input => {
         input.classList.toggle("dark-mode");
