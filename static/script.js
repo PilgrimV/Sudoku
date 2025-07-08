@@ -1,3 +1,48 @@
+const fileInput = document.getElementById('sudoku-image');
+const canvas = document.getElementById('sudoku-canvas');
+const ctx = canvas.getContext('2d');
+
+fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, 450, 450);
+        canvas.style.display = 'block';
+    };
+    img.src = URL.createObjectURL(file);
+});
+
+document.getElementById('recognize-btn').addEventListener('click', async () => {
+    if (canvas.style.display !== 'block') {
+        alert('Сначала загрузите изображение судоку!');
+        return;
+    }
+
+    const size = 50;
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            const cellData = ctx.getImageData(col * size, row * size, size, size);
+
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = tempCanvas.height = size;
+            tempCanvas.getContext('2d').putImageData(cellData, 0, 0);
+
+            const { data: { text } } = await Tesseract.recognize(
+                tempCanvas,
+                'eng',
+                { tessedit_char_whitelist: '123456789' }
+            );
+
+            const digit = text.trim().replace(/\D/g, '');
+            document.getElementById(`cell-${row}-${col}`).value = digit.length === 1 ? digit : '';
+        }
+    }
+
+    alert('Распознавание завершено!');
+});
+
 document.getElementById("solve-btn").addEventListener("click", () => {
     const board = [];
     for (let i = 0; i < 9; i++) {
@@ -8,7 +53,7 @@ document.getElementById("solve-btn").addEventListener("click", () => {
         }
         board.push(row);
     }
-    solveSudoku(board, true);  // true для быстрого решения
+    solveSudoku(board, true);
 });
 
 document.getElementById("solve-animated-btn").addEventListener("click", () => {
@@ -21,18 +66,28 @@ document.getElementById("solve-animated-btn").addEventListener("click", () => {
         }
         board.push(row);
     }
-    solveSudoku(board, false);  // false для решения с анимацией
+    solveSudoku(board, false);
 });
 
 document.getElementById("clear-btn").addEventListener("click", () => {
     document.querySelectorAll("input").forEach(cell => {
         cell.value = "";
-        cell.style.backgroundColor = "";  // Очищаем фон
+        cell.style.backgroundColor = "";
+    });
+});
+
+document.getElementById("theme-toggle-btn").addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    document.querySelectorAll("input").forEach(input => {
+        input.classList.toggle("dark-mode");
+    });
+    document.querySelectorAll("button").forEach(button => {
+        button.classList.toggle("dark-mode");
     });
 });
 
 async function solveSudoku(board, quickSolve = false) {
-    const delay = quickSolve ? 0 : 30;  // Быстрое решение без задержек
+    const delay = quickSolve ? 0 : 30;
 
     async function isValid(num, row, col) {
         for (let i = 0; i < 9; i++) {
