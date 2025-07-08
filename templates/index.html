@@ -2,49 +2,111 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Решатель Судоку</title>
+    <title>Анимированный решатель Судоку</title>
     <style>
         table {
             border-collapse: collapse;
             margin: 20px auto;
+            border: 3px solid black;
         }
         td {
-            border: 1px solid #999;
-            width: 40px;
-            height: 40px;
-            text-align: center;
+            padding: 0;
         }
         input {
-            width: 38px;
-            height: 38px;
-            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
             text-align: center;
+            border: 1px solid #999;
+            outline: none;
+            box-sizing: border-box;
         }
-        .thick-border {
-            border-width: 2px;
+
+        /* Жирные границы 3x3 */
+        .top-border {
+            border-top: 2px solid black !important;
         }
-        #solve-btn {
-            display: block;
-            margin: 10px auto;
+        .left-border {
+            border-left: 2px solid black !important;
+        }
+        .right-border {
+            border-right: 2px solid black !important;
+        }
+        .bottom-border {
+            border-bottom: 2px solid black !important;
+        }
+
+        /* Подсветка */
+        input:focus {
+            background-color: #ffffcc;
+        }
+
+        .highlight-same {
+            background-color: #d1ffd1 !important;
+        }
+
+        #solve-btn, #export-btn {
+            display: inline-block;
+            margin: 20px 5px;
             padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #export-menu {
+            font-size: 14px;
+        }
+
+        .export-option:hover {
+            background-color: #f0f0f0;
         }
     </style>
+
+    <!-- Библиотеки для экспорта -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-    <h1 style="text-align:center;">Решатель Судоку</h1>
-    <form method="POST">
-        <table>
-            {% for i in range(9) %}
-            <tr>
-                {% for j in range(9) %}
-                <td class="{% if j % 3 == 0 and j != 0 %}thick-border{% endif %}">
-                    <input type="number" name="cell_{{i}}_{{j}}" min="1" max="9" value="{{ board[i][j] if board[i][j] != 0 else '' }}">
-                </td>
-                {% endfor %}
-            </tr>
+    <h1 style="text-align:center;">Анимированный решатель Судоку</h1>
+
+    <table>
+        {% for i in range(9) %}
+        <tr>
+            {% for j in range(9) %}
+            <td>
+                <input
+                    type="number"
+                    id="cell-{{i}}-{{j}}"
+                    min="1"
+                    max="9"
+                    class="
+                        {% if i % 3 == 0 %} top-border{% endif %}
+                        {% if j % 3 == 0 %} left-border{% endif %}
+                        {% if i == 8 %} bottom-border{% endif %}
+                        {% if j == 8 %} right-border{% endif %}
+                    "
+                />
+            </td>
             {% endfor %}
-        </table>
-        <button id="solve-btn" type="submit">Решить</button>
-    </form>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div style="text-align: center;">
+        <button id="solve-btn">Решить с анимацией</button>
+
+        <div style="position: relative; display: inline-block;">
+            <button id="export-btn">📤 Экспорт</button>
+            <div id="export-menu" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; z-index: 10;">
+                <div class="export-option" data-type="png" style="padding: 8px; cursor: pointer;">Сохранить как PNG</div>
+                <div class="export-option" data-type="pdf" style="padding: 8px; cursor: pointer;">Сохранить как PDF</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
+
+
+
