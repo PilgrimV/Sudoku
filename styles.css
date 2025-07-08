@@ -1,0 +1,21 @@
+/* Тёмная тема */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+input.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #444444;
+}
+
+button.dark-mode {
+    background-color: #444444;
+    color: #ffffff;
+    border: 1px solid #555555;
+}
+
+button.dark-mode:hover {
+    background-color: #555555;
+}
